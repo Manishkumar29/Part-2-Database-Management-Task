@@ -3,6 +3,13 @@
    This script creates the schema, inserts sample data, and runs the required analysis queries.
 */
 
+-- 0. Cleanup (Optional, but helpful for re-running the script)
+DROP TABLE IF EXISTS Payments CASCADE;
+DROP TABLE IF EXISTS OrderItems CASCADE;
+DROP TABLE IF EXISTS Orders CASCADE;
+DROP TABLE IF EXISTS Products CASCADE;
+DROP TABLE IF EXISTS Customers CASCADE;
+
 -- 1. Tables Creation
 CREATE TABLE Customers (
     customer_id SERIAL PRIMARY KEY,
@@ -20,22 +27,22 @@ CREATE TABLE Products (
 
 CREATE TABLE Orders (
     order_id SERIAL PRIMARY KEY,
-    customer_id INT REFERENCES Customers(customer_id),
+    customer_id INT REFERENCES Customers(customer_id) ON DELETE CASCADE,
     order_date DATE DEFAULT CURRENT_DATE,
     order_status VARCHAR(20) DEFAULT 'Pending'
 );
 
 CREATE TABLE OrderItems (
     item_id SERIAL PRIMARY KEY,
-    order_id INT REFERENCES Orders(order_id),
-    product_id INT REFERENCES Products(product_id),
+    order_id INT REFERENCES Orders(order_id) ON DELETE CASCADE,
+    product_id INT REFERENCES Products(product_id) ON DELETE CASCADE,
     quantity INT,
     unit_price DECIMAL(10, 2)
 );
 
 CREATE TABLE Payments (
     payment_id SERIAL PRIMARY KEY,
-    order_id INT REFERENCES Orders(order_id),
+    order_id INT REFERENCES Orders(order_id) ON DELETE CASCADE,
     payment_method VARCHAR(50),
     amount DECIMAL(10, 2),
     payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
